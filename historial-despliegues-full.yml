@@ -47,6 +47,10 @@
         content: "{{ deployment_snapshot | to_nice_json }}"
         dest: "{{ output_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.json"
 
+    - name: Show deployment snapshot
+      debug:
+        var: deployment_snapshot
+
 
 
 
