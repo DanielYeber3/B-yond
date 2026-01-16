@@ -2,10 +2,9 @@
   hosts: all
   gather_facts: true
   become: false
-
-
+  
   vars:
-    output_dir: "/var/log/deploy-history"
+    output_dir: "/tmp/deploy-history"
 
 
   tasks:
@@ -45,5 +44,6 @@
       copy:
         content: "{{ deployment_snapshot | to_nice_json }}"
         dest: "{{ output_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.json"
+
 
 
