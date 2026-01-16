@@ -33,9 +33,11 @@
             ram_mb: "{{ ansible_memtotal_mb }}"
             disks: "{{ ansible_mounts }}"
           network:
-            interfaces: "{{ ansible_interfaces }}"
-            ips: "{{ ansible_all_ipv4_addresses }}"
-            default_gw: "{{ ansible_default_ipv4.gateway }}"
+            interfaces: "{{ ansible_facts.get('interfaces', []) }}"
+            ipv4:
+              all: "{{ ansible_facts.get('all_ipv4_addresses', []) }}"
+              default: "{{ ansible_facts.get('default_ipv4', {}) }}"
+
           packages:
             installed: "{{ rpm_packages.stdout_lines }}"
           repositories: "{{ repo_files.files | map(attribute='path') | list }}"
@@ -44,6 +46,7 @@
       copy:
         content: "{{ deployment_snapshot | to_nice_json }}"
         dest: "{{ output_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.json"
+
 
 
 
