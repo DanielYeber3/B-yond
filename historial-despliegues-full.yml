@@ -1,0 +1,44 @@
+- name: Deployment History Collector
+  hosts: all
+  gather_facts: true
+
+  vars:
+    output_dir: "/var/log/deploy-history"
+
+  tasks:
+    - name: Ensure output dir exists
+      file:
+        path: "{{ output_dir }}"
+        state: directory
+
+    - name: Get installed packages
+      command: rpm -qa
+      register: rpm_packages
+
+    - name: Get repo files
+      find:
+        paths: /etc/yum.repos.d
+        patterns: "*.repo"
+      register: repo_files
+
+    - name: Build deployment snapshot
+      set_fact:
+        deployment_snapshot:
+          timestamp: "{{ ansible_date_time.iso8601 }}"
+          hostname: "{{ inventory_hostname }}"
+          resources:
+            cpu_vcpus: "{{ ansible_processor_vcpus }}"
+            ram_mb: "{{ ansible_memtotal_mb }}"
+            disks: "{{ ansible_mounts }}"
+          network:
+            interfaces: "{{ ansible_interfaces }}"
+            ips: "{{ ansible_all_ipv4_addresses }}"
+            default_gw: "{{ ansible_default_ipv4.gateway }}"
+          packages:
+            installed: "{{ rpm_packages.stdout_lines }}"
+          repositories: "{{ repo_files.files | map(attribute='path') | list }}"
+
+    - name: Save snapshot
+      copy:
+        content: "{{ deployment_snapshot | to_nice_json }}"
+        dest: "{{ output_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.json"
