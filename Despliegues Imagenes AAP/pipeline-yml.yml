@@ -4,7 +4,11 @@
 
   tasks:
 
-
+    - name: test connection
+      hosts: vm-lab
+      tasks:
+        - ping:
+        
     - name: Check where we are running
       command: hostname
       register: host
@@ -36,4 +40,5 @@
       ansible.builtin.debug:
 
         var: pod_status.stdout
+
 
