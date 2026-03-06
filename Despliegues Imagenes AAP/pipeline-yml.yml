@@ -1,0 +1,28 @@
+- name: CNF image pipeline test
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Pull nginx container image
+      ansible.builtin.command: docker pull nginx:latest
+      register: pull_result
+
+    - name: Show pull result
+      ansible.builtin.debug:
+        var: pull_result.stdout
+
+    - name: Deploy nginx to cluster
+      ansible.builtin.command: kubectl apply -f k8s/nginx-deployment.yaml
+      register: deploy_result
+
+    - name: Wait for pod ready
+      ansible.builtin.command: kubectl wait --for=condition=Ready pod -l app=nginx-test --timeout=120s
+
+    - name: Get pod status
+      ansible.builtin.command: kubectl get pods
+      register: pod_status
+
+    - name: Show pod status
+      ansible.builtin.debug:
+        var: pod_status.stdout
