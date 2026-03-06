@@ -1,22 +1,18 @@
 - name: CNF image pipeline test
   hosts: vm-local-dani
   gather_facts: false
-
   tasks:
-
     - name: test connection
-      hosts: vm-local-dani
-      tasks:
-        - ping:
-        
+      ansible.builtin.ping:
+
     - name: Check where we are running
-      command: hostname
+      ansible.builtin.command: hostname
       register: host
-    
-    - debug:
+
+    - name: Debug host
+      ansible.builtin.debug:
         var: host.stdout
 
-        
     - name: Pull nginx container image
       ansible.builtin.command: docker pull nginx:latest
       register: pull_result
@@ -40,6 +36,7 @@
       ansible.builtin.debug:
 
         var: pod_status.stdout
+
 
 
 
