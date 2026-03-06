@@ -4,6 +4,15 @@
 
   tasks:
 
+
+    - name: Check where we are running
+      command: hostname
+      register: host
+    
+    - debug:
+        var: host.stdout
+
+        
     - name: Pull nginx container image
       ansible.builtin.command: docker pull nginx:latest
       register: pull_result
@@ -25,4 +34,5 @@
 
     - name: Show pod status
       ansible.builtin.debug:
+
         var: pod_status.stdout
