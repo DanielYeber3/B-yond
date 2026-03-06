@@ -5,7 +5,7 @@
   tasks:
 
     - name: test connection
-      hosts: vm-lab
+      hosts: vm-local-dani
       tasks:
         - ping:
         
@@ -40,5 +40,6 @@
       ansible.builtin.debug:
 
         var: pod_status.stdout
+
 
 
