@@ -1,5 +1,5 @@
 - name: CNF image pipeline test
-  hosts: localhost
+  hosts: vm-local-dani
   gather_facts: false
 
   tasks:
@@ -36,3 +36,4 @@
       ansible.builtin.debug:
 
         var: pod_status.stdout
+
